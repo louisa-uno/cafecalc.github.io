@@ -334,6 +334,21 @@
         $total.textContent = total.toLocaleString(locale, { style: 'currency', currency: 'EUR' });
       }
 
+      // Clears all inputs after 5 minutes of inactivity
+      let inactivityTimer;
+      const resetInactivityTimer = () => {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+          $ovlConfirm.click();
+          $clear.click();
+        }, 5 * 60 * 1000);
+      };
+      document.addEventListener("keydown", resetInactivityTimer);
+      document.addEventListener("mousedown", resetInactivityTimer);
+      document.addEventListener("touchstart", resetInactivityTimer);
+      document.addEventListener("input", resetInactivityTimer);
+      resetInactivityTimer();
+
       calc();
     });
   </script>
