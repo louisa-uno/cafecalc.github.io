@@ -307,7 +307,13 @@
           const count = Number.parseInt($option.getAttribute('data-count')) || 0;
           const price = parseAnyFloat($option.getAttribute('data-price'));
           const noItem = $option.hasAttribute('data-no-item');
-          total += count * (price + member);
+          const memberNoDiscount = $option.hasAttribute(
+            "data-member-no-discount"
+          );
+          total += count * price;
+          if (!memberNoDiscount) {
+            total += count * member;
+          }
           items += noItem ? 0 : count;
         }
 
@@ -364,7 +370,7 @@
   <button class="switch" id="deposit" data-price="2,00" data-checked><span>Pfand</span></button>
   <button class="option cat3" data-price="4,50" data-price-change="6,50;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Cocktail</button>
   <button class="option cat3" data-price="3,50" data-price-change="5,00;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Lillet<br>Longdrink</button>
-  <button class="option cat3" data-price="1,00" data-price-change="2,50;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00" data-no-item>2 cl.<br>Extra Shot</button>
+  <button class="option cat3" data-price="1,00" data-price-change="2,50;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00" data-no-item data-member-no-discount>2 cl.<br>Extra Shot</button>
   <button class="option cat3" data-price="1,70" data-price-change="3,20;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00" data-no-item>Shot</button>
   <button class="option cat3" data-price="2,70" data-price-change="4,20;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Aperol</button>
   <button class="option cat1" data-price="3,50" data-price-change="4,50;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Ginlt.<br>Cocktail</button>
