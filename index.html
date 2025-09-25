@@ -252,10 +252,11 @@
       // State buffer for typed amount
       let cashBuffer = "0";
       let hasDecimal = false;
+      const dec = ","; // decimal separator
 
       // Helper to parse any float from text, compatible with both comma/dot
       function parseAnyFloat(text) {
-        return Number.parseFloat(text.replace(",", "."));
+        return Number.parseFloat(text.replace(dec, "."));
       }
 
       function syncOverlayFromCash() {
@@ -264,30 +265,24 @@
           cashBuffer = "0";
           hasDecimal = false;
         } else {
+          cashBuffer = current;
           const n = parseAnyFloat(current);
-          const parts = n.toFixed(2).split(".");
-          if (n % 1 === 0) {
-            cashBuffer = String(Math.trunc(n));
+          if (Number.isInteger(n)) {
             hasDecimal = false;
           } else {
-            const rawFrac = parts[1].slice(0, 2); // keep up to 2 digits
-            if (Number.isInteger(n)) {
-              cashBuffer = String(Math.trunc(n));
-              hasDecimal = false;
-            } else {
-              // Preserve fractional as-is (may be "0" or "00")
-              cashBuffer = parts[0] + "," + rawFrac;
-              hasDecimal = true;
-            }
+            hasDecimal = true;
           }
         }
         $ovlAmount.textContent = cashBuffer;
       }
 
       function applyCashBuffer() {
-        if (!cashBuffer || cashBuffer === "0") {
+        if (cashBuffer === "0") {
           $cash.textContent = "";
         } else {
+          if (cashBuffer.slice(-1) === dec) {
+            cashBuffer = cashBuffer.slice(0, -1);
+          }
           $cash.textContent = cashBuffer;
         }
         calc();
@@ -309,7 +304,6 @@
       }
 
       function handlePadKey(key, action) {
-        const dec = ","; // decimal separator
         if (action === "back") {
           if (cashBuffer.length) {
             const removed = cashBuffer.slice(-1);
@@ -359,8 +353,7 @@
       });
 
       // Open overlay when the cash field is clicked/tapped
-      $cash.addEventListener("click", (e) => {
-        e.preventDefault();
+      $cash.addEventListener("click", () => {
         openCashOverlay();
       });
 
