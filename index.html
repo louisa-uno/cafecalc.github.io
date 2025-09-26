@@ -499,7 +499,55 @@
         }
 
         $total.textContent = total.toLocaleString(locale, { style: 'currency', currency: 'EUR' });
+        pushHistory();
       }
+
+      // Save last 20 states as history with the option to restore the previous one
+      const history = [];
+      function pushHistory() {
+        const state = {
+          cash: $cash.textContent,
+          member: $member.getAttribute('data-checked'),
+          deposit: $deposit.getAttribute('data-checked'),
+          depositCount: $deposit.getAttribute('data-count') || '0',
+          options: [...$options].map($o => $o.getAttribute('data-count') || '0'),
+        };
+        const lastState = history[history.length - 1];
+        if (JSON.stringify(state) !== JSON.stringify(lastState)) {
+          history.push(state);
+          if (history.length > 20) {
+            history.shift();
+          }
+        }
+      }
+      function popHistory() {
+        if (history.length < 2) return;
+        history.pop(); // current state
+        const state = history.pop(); // previous state
+        if (!state) return;
+
+        $cash.textContent = state.cash;
+        if (state.member === 'true') {
+          $member.setAttribute('data-checked', 'true');
+        } else {
+          $member.removeAttribute('data-checked');
+        }
+        if (state.deposit === 'true') {
+          $deposit.setAttribute('data-checked', 'true');
+        } else {
+          $deposit.removeAttribute('data-checked');
+        }
+        $deposit.setAttribute('data-count', state.depositCount);
+        state.options.forEach((count, i) => {
+          if (count != null) {
+            $options[i].setAttribute('data-count', count);
+          }
+        });
+        calc();
+      }
+      $calc.querySelector('#current-time').addEventListener('click', () => {
+        popHistory();
+      });
 
       // Clears all inputs after 5 minutes of inactivity
       let inactivityTimer;
@@ -549,7 +597,7 @@
     <button class="clear" id="clear">&ensp;AC&ensp;</button>
   </div>
   <button class="switch" id="member" data-price="-0,2" data-price-change="-0,5;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Mitglied</button>
-  <button class="switch" id="deposit" data-price="2,00" data-checked><span>Pfand</span></button>
+  <button class="switch" id="deposit" data-price="2,00" data-checked="true"><span>Pfand</span></button>
   <button class="option cat3" data-price="4,50" data-price-change="6,50;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Cocktail</button>
   <button class="option cat3" data-price="3,50" data-price-change="5,00;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00">Lillet<br>Longdrink</button>
   <button class="option cat3" data-price="1,00" data-price-change="2,50;2025-06-25T16:00:00+02:00;2025-06-28T18:00:00+02:00" data-no-item data-member-no-discount>2 cl.<br>Extra Shot</button>
