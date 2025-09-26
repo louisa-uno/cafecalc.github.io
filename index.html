@@ -81,6 +81,13 @@
       white-space: nowrap;
       overflow: hidden;
     }
+    #calculator > .result #current-time {
+      font-size: 1em;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);      
+      opacity: 0.5;
+    }
     #calculator > .result #cash:empty::before {
       display: block;
       content: '';
@@ -509,6 +516,26 @@
       document.addEventListener("input", resetInactivityTimer);
       resetInactivityTimer();
 
+      // Update current time every second
+      async function showCurrentTime() {
+        const el = document.getElementById("current-time");
+        if (!el) return;
+
+        const options = {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          timeZone: "Europe/Berlin"
+        };
+
+        while (true) {
+          const now = new Date();
+          el.textContent = now.toLocaleTimeString("de-DE", options);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+      showCurrentTime();
+      
       calc();
     });
   </script>
@@ -516,6 +543,7 @@
 <body>
 <div id="calculator">
   <div class="result">
+    <div id="current-time"></div>
     <div id="cash"></div>
     <div id="total"></div>
     <button class="clear" id="clear">&ensp;AC&ensp;</button>
