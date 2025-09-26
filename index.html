@@ -81,7 +81,7 @@
       white-space: nowrap;
       overflow: hidden;
     }
-    #calculator > .result #current-time {
+    #calculator > .result #time {
       font-size: 1em;
       position: absolute;
       left: 50%;
@@ -545,7 +545,7 @@
         });
         calc();
       }
-      $calc.querySelector('#current-time').addEventListener('click', () => {
+      $calc.querySelector('#time').addEventListener('click', () => {
         popHistory();
       });
 
@@ -566,7 +566,7 @@
 
       // Update current time every second
       async function showCurrentTime() {
-        const el = document.getElementById("current-time");
+        const el = document.getElementById("time");
         if (!el) return;
 
         const options = {
@@ -591,8 +591,8 @@
 <body>
 <div id="calculator">
   <div class="result">
-    <div id="current-time"></div>
     <div id="cash"></div>
+    <div id="time"></div>
     <div id="total"></div>
     <button class="clear" id="clear">&ensp;AC&ensp;</button>
   </div>
